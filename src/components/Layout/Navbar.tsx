@@ -5,9 +5,11 @@ import { Home, Search, Heart, User, Wallet } from 'lucide-react';
 interface NavbarProps {
   onConnectWallet: () => void;
   walletConnected: boolean;
+  walletAddress?: string | null;
+  error?: string | null;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onConnectWallet, walletConnected }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onConnectWallet, walletConnected, walletAddress, error }) => {
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
@@ -71,6 +73,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectWallet, walletConnected
           </div>
 
           <div className="flex items-center space-x-4">
+            {error && (
+              <div className="text-red-600 text-sm hidden sm:block">
+                {error}
+              </div>
+            )}
             <button
               onClick={onConnectWallet}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
@@ -81,9 +88,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onConnectWallet, walletConnected
             >
               <Wallet className="w-4 h-4" />
               <span className="hidden sm:block">
-                {walletConnected ? 'Wallet Connected' : 'Connect Wallet'}
+                {walletConnected ? 'Disconnect' : 'Connect Wallet'}
               </span>
             </button>
+            {walletConnected && walletAddress && (
+              <div className="hidden lg:block text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-lg">
+                {`${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`}
+              </div>
+            )}
           </div>
         </div>
       </div>

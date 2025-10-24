@@ -4,11 +4,13 @@ import { mockUser, mockMarketData } from '../data/mockData';
 
 interface DashboardPageProps {
   walletConnected: boolean;
+  walletAddress?: string | null;
   onConnectWallet: () => void;
 }
 
 export const DashboardPage: React.FC<DashboardPageProps> = ({ 
   walletConnected, 
+  walletAddress,
   onConnectWallet 
 }) => {
   return (
@@ -148,9 +150,12 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
                     <span className="text-emerald-600 font-medium">Wallet Connected</span>
                   </div>
                   <div className="text-sm text-gray-600 break-all bg-gray-50 p-3 rounded-lg">
-                    0x742d35cc6634C0532925a3b8D6aD8a7e15b2a9d1
+                    {walletAddress || '0x742d35cc6634C0532925a3b8D6aD8a7e15b2a9d1'}
                   </div>
-                  <button className="w-full border border-red-300 text-red-600 hover:bg-red-50 py-2 px-4 rounded-lg transition-colors">
+                  <button 
+                    onClick={onConnectWallet}
+                    className="w-full border border-red-300 text-red-600 hover:bg-red-50 py-2 px-4 rounded-lg transition-colors"
+                  >
                     Disconnect Wallet
                   </button>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { WalletProvider, useWallet } from './contexts/WalletContext';
 import { Navbar } from './components/Layout/Navbar';
 import { HomePage } from './pages/HomePage';
 import { ListingsPage } from './pages/ListingsPage';
@@ -8,15 +9,16 @@ import { FavoritesPage } from './pages/FavoritesPage';
 import { DashboardPage } from './pages/DashboardPage';
 
 const AppContent: React.FC = () => {
-  const [walletConnected, setWalletConnected] = useState(false);
+  const { isConnected, connectWallet, disconnectWallet, account, error } = useWallet();
   const [favorites, setFavorites] = useState(['1', '4']);
   const navigate = useNavigate();
 
-  const handleConnectWallet = () => {
-    // Mock wallet connection with animation
-    setTimeout(() => {
-      setWalletConnected(!walletConnected);
-    }, 1000);
+  const handleConnectWallet = async () => {
+    if (isConnected) {
+      disconnectWallet();
+    } else {
+      await connectWallet();
+    }
   };
 
   const handleToggleFavorite = (propertyId: string) => {
@@ -35,7 +37,9 @@ const AppContent: React.FC = () => {
     <>
       <Navbar 
         onConnectWallet={handleConnectWallet}
-        walletConnected={walletConnected}
+        walletConnected={isConnected}
+        walletAddress={account}
+        error={error}
       />
       
       <Routes>
@@ -75,7 +79,8 @@ const AppContent: React.FC = () => {
           path="/dashboard" 
           element={
             <DashboardPage 
-              walletConnected={walletConnected}
+              walletConnected={isConnected}
+              walletAddress={account}
               onConnectWallet={handleConnectWallet}
             />
           } 
@@ -87,9 +92,11 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <WalletProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </WalletProvider>
   );
 }
 
